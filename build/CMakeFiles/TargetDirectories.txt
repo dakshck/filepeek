@@ -1,0 +1,3 @@
+/home/daksh/filepeek/build/CMakeFiles/filepeek.dir
+/home/daksh/filepeek/build/CMakeFiles/edit_cache.dir
+/home/daksh/filepeek/build/CMakeFiles/rebuild_cache.dir

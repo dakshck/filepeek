@@ -1,28 +1,43 @@
-#include <stdio.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <string.h>
+#include "filepeek.h"
 
-void help(void);
-void version(void);
+int fetchmetadata(char *argv[], int argfile);
 
 int main(int argc, char*argv[]) {
 
 	struct stat metadata;
 
-	if(argc > 2) {	//check the number of args
+	if(argc > 3) {	//check the number of args
 		printf("filepeek: too many arguments\n");
 		printf("Usage: ./filepeek <filename>\n");
 		return 1;
-	} else if(argc == 2) {
+	} else if(argc == 2 || argc == 3) {
 		if(strcmp(argv[1], "--help") == 0) {
 			help();
 			return 0;
 		} else if(strcmp(argv[1], "--version") == 0) {
 			version();
 			return 0;
+		} else if(strcmp(argv[1], "--") == 0){
+    			if (argc < 3) {
+        			fprintf(stderr, "Usage: filepeek -- <filename>\n");
+        			return 2;
+    			}
+    			int argfile = 2;
+    			return fetchmetadata(argv, argfile);
 		} else {
-			int checksuccess = stat(argv[1], &metadata);  //writes metadata to the struct and evalurates to 0 if successful (-1)
+			int argfile = 1;
+			return fetchmetadata(argv, argfile);
+		}
+	} else {
+		fprintf(stderr, "Usage: ./filepeek <filename>\n");  //defines an error and returns 2 instead
+		return 2;
+	}
+
+}
+
+int fetchmetadata( char *argv[], int argfile){
+			struct stat metadata;
+			int checksuccess = stat(argv[argfile], &metadata);  //writes metadata to the struct and evalurates to 0 if successful (-1)
 			if(checksuccess == 0) {
 				if(S_ISREG(metadata.st_mode)) {
 					char timebuf[80];
@@ -36,7 +51,7 @@ int main(int argc, char*argv[]) {
 						fprintf(stderr, "filepeek: could not format timestamp data\n");
 						return 2;
 					}
-					printf("Name: %s\n", argv[1]);
+					printf("Name: %s\n", argv[argfile]);
 					printf("Size: %ld\n", metadata.st_size);
 					printf("Perms: %o\n", metadata.st_mode & 0777);
 					printf("Last modified: %s\n", timebuf);
@@ -49,29 +64,6 @@ int main(int argc, char*argv[]) {
 				perror("filepeek");
 				return 1;
 			}
-		}
-	} else {
-		fprintf(stderr, "Usage: ./filepeek <filename>\n");  //defines an error and returns 2 instead
-		return 2;
-	}
 
 }
 
-void help(void) {
-	printf("Usage: filepeek <filename>\n"
-       "\n"
-       "Inspect metadata of a regular file.\n"
-       "\n"
-       "Options:\n"
-       "  --help       Display this help message\n"
-       "  --version    Display version information\n"
-       "\n"
-       "Examples:\n"
-       "  filepeek main.c\n"
-       "  filepeek --help\n"
-       "  filepeek --version\n");
-}
-
-void version(void) {
-	printf("filepeek 0.1.0\n");
-}

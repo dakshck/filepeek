@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/daksh/filepeek/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

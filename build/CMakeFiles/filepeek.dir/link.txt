@@ -1,0 +1,1 @@
+/usr/sbin/cc -Wl,--dependency-file=CMakeFiles/filepeek.dir/link.d CMakeFiles/filepeek.dir/src/main.c.o CMakeFiles/filepeek.dir/src/options.c.o -o filepeek
